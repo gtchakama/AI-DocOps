@@ -1,0 +1,16 @@
+{
+  "name": "my-ai-book-analyzer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A starter for testing out ai API",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.1",
+    "express": "^4.18.3",
+    "replicate": "*"
+  }
+}
