@@ -1,8 +1,12 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import Replicate from 'replicate';
+import logger from './logger.js';
+import loadEnv from './loadEnv.js';
 
 dotenv.config();
+loadEnv();
+
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -13,18 +17,25 @@ const replicate = new Replicate({
 
 app.use(express.json());
 
-app.post('/api/runReplicate', async (req, res) => {
+app.post('/api/run-ai', async (req, res) => {
   try {
-    const { model, input } = req.body;
-    console.log('Running...');
-    const output = await replicate.run(model, { input });
+    const { input } = req.body;
+    logger.info('Running AI model...');
+
+    const output = await replicate.run(process.env.REPLICATE_MODEL_ID, { input });
+
+    logger.info('AI model run successful');
     res.json({ success: true, output });
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ success: false, error: error.message });
+    logger.error('Error running AI model:', error);
+    if (error instanceof Error) {
+      res.status(500).json({ success: false, error: error.message });
+    } else {
+      res.status(500).json({ success: false, error: 'An unknown error occurred' });
+    }
   }
 });
 
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+  logger.info(`Server is running on port ${port}`);
 });
